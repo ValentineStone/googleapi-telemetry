@@ -1,0 +1,23 @@
+{
+  "name": "@valentine-stone/googleapi-telemetry",
+  "version": "1.0.1",
+  "description": "An assortment of Google Cloud utilities.",
+  "author": "Leonid Romanovsky <sirLeonidRomanovsky@gmail.com>",
+  "license": "MIT",
+  "bin": "telem.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ValentineStone/googleapi-telemetry.git"
+  },
+  "pkg": {},
+  "scripts": {
+    "build": "pkg . --target node14-win-x86"
+  },
+  "dependencies": {
+    "@valentine-stone/googleapi-utils": "^1.0.0",
+    "@valentine-stone/googleapi-utils-mavlink": "^1.0.0",
+    "chalk": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "jszip": "^3.6.0"
+  }
+}
