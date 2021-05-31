@@ -48,7 +48,7 @@ const proxyPubSub = ({
       console.log
     ),
     adapters.transform(
-      //adapters.throttle(
+      adapters.throttle(
         adapters.pubsub({
           mode: 'proxy',
           uuid,
@@ -58,9 +58,9 @@ const proxyPubSub = ({
             console.log(...args)
           }
         }),
-      //  interval,
-      //  buffer,
-      //),
+        interval,
+        buffer,
+      ),
       recv => {
         return buff => {
           if (logRecv && logRecvTimeout) noDataTimeout()
@@ -97,7 +97,7 @@ const udpToSerial = ({
 const ignoreErrors = error => undefined
 
 const loadEnv = async assignEnv =>
-  await require('./zipenv')('keys_zip', assignEnv).catch(async () => {
+  await require('./zipenv')('keys', assignEnv).catch(async () => {
     const fs = require('fs/promises')
     const envData = await fs.readFile('.env')
     const env = require('dotenv').parse(envData)
