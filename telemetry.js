@@ -48,7 +48,7 @@ const deviceIoTMavlink = ({
     ),
    // transforms.mavlink(),
    // transforms.mavlink()
-  ),
+  //),
   adapters.throttle(
     adapters.googleIoT({
       mode: 'device',
