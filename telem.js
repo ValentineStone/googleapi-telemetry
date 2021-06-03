@@ -81,8 +81,13 @@ const udpToSerial = ({
   udpPort,
   serialPath,
   serialBaudRate,
-}) => adapters.connect(
-  adapters.udp(
+  proxy,
+}) => adapters.connect(proxy
+  ? adapters.udpProxy(
+    udpHost,
+    udpPort,
+    console.log
+  ) : adapters.udp(
     udpHost,
     udpPort,
     console.log
@@ -171,11 +176,13 @@ if (require.main === module) {
       const serialBaudRate = +(process.argv[4] || env.DEVICE_SERIAL_BAUD)
       const udpHost = process.argv[5] || env.DEVICE_UDP_HOST
       const udpPort = +(process.argv[6] || env.DEVICE_UDP_PORT)
+      const proxy = (process.argv[7] === 'proxy' || env.DEVICE_UDP_AS_PROXY)
       udpToSerial({
         udpHost,
         udpPort,
         serialPath,
         serialBaudRate,
+        proxy,
       })
     }
   })()
