@@ -104,7 +104,7 @@ const ignoreErrors = error => undefined
 const loadEnv = async assignEnv =>
   await require('./zipenv')('keys', assignEnv).catch(async () => {
     const fs = require('fs/promises')
-    const envData = await fs.readFile('.env')
+    const envData = await fs.readFile('.env').catch(e => process.env)
     const env = require('dotenv').parse(envData)
     if (assignEnv)
       Object.assign(process.env, env)
