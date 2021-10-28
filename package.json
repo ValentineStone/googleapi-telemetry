@@ -14,7 +14,7 @@
     "build": "pkg . --target node14-win-x86"
   },
   "dependencies": {
-    "@valentine-stone/googleapi-utils": "^1.2.0",
+    "@valentine-stone/googleapi-utils": "^1.3.0",
     "@valentine-stone/googleapi-utils-mavlink": "^1.0.0",
     "chalk": "^4.1.1",
     "dotenv": "^8.2.0",

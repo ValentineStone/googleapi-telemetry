@@ -76,55 +76,6 @@ const proxyPubSub = ({
   )
 }
 
-const proxySerialPubSub = ({
-  uuid,
-  credentials,
-  proxyPath,
-  proxyBaud,
-  interval,
-  buffer,
-  logRecv,
-  logRecvTimeout = 0,
-  logRecvWarning = ''
-}) => {
-  const noDataTimeout = timeout(() => {
-    if (logRecvWarning) console.log(logRecvWarning)
-  }, logRecvTimeout)
-  return adapters.connect(
-    adapters.serialport(
-      proxyPath,
-      proxyBaud,
-      console.log
-    ),
-    adapters.transform(
-      adapters.throttle(
-        adapters.pubsub({
-          mode: 'proxy',
-          uuid,
-          credentials,
-          connected: (...args) => {
-            if (logRecv && logRecvTimeout) noDataTimeout()
-            console.log(...args)
-          }
-        }),
-        interval,
-        buffer,
-      ),
-      recv => {
-        return buff => {
-          if (logRecv && logRecvTimeout) noDataTimeout()
-          if (logRecv) console.log(
-            logRecv,
-            buff.length,
-            ...(buff.length ? ['< ' + buff[0].toString(16) + ' ... >'] : [])
-          )
-          recv(buff)
-        }
-      }
-    ),
-  )
-}
-
 const udpToSerial = ({
   udpHost,
   udpPort,
@@ -153,8 +104,8 @@ const ignoreErrors = error => undefined
 const loadEnv = async assignEnv =>
   await require('./zipenv')('keys', assignEnv).catch(async () => {
     const fs = require('fs/promises')
-    const envData = await fs.readFile('.env').catch(ignoreErrors)
-    const env = envData ? require('dotenv').parse(envData) : process.env
+    const envData = await fs.readFile('.env')
+    const env = require('dotenv').parse(envData)
     if (assignEnv)
       Object.assign(process.env, env)
     const [
@@ -177,6 +128,7 @@ const loadEnv = async assignEnv =>
 
 if (require.main === module) {
   (async () => {
+    console.log('Connecting...')
     const {
       env,
       credentials,
@@ -200,31 +152,6 @@ if (require.main === module) {
         credentials,
         gcsHost,
         gcsPort,
-        interval: +env.IOT_THROTTLE_INTERVAL,
-        buffer: +env.IOT_THROTTLE_BUFFER,
-        logRecv,
-        logRecvTimeout,
-        logRecvWarning
-      })
-    }
-    if (mode === 'proxy-serial') {
-      const uuid = env.DEVICE_UUID
-      const proxyPath = process.argv[3] || env.PROXY_SERIAL_PATH
-      const proxyBaud = process.argv[4] || +env.PROXY_SERIAL_BAUD
-      const logRecv = (process.argv[5] === undefined
-        ? 'from device:'
-        : (process.argv[5] === 'nolog'
-          ? undefined :
-          process.argv[5]
-        )
-      )
-      const logRecvTimeout = +process.argv[6] || +env.PROXY_LOG_RECV_TIMEOUT
-      const logRecvWarning = process.argv[7] || env.PROXY_LOG_RECV_WARNING
-      proxySerialPubSub({
-        uuid,
-        credentials,
-        proxyPath,
-        proxyBaud,
         interval: +env.IOT_THROTTLE_INTERVAL,
         buffer: +env.IOT_THROTTLE_BUFFER,
         logRecv,
