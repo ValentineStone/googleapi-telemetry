@@ -1,6 +1,6 @@
 'use strict'
 const adapters = require('@valentine-stone/googleapi-utils/adapters')
-const transforms = require('@valentine-stone/googleapi-utils-mavlink/transforms')
+//const transforms = require('@valentine-stone/googleapi-utils-mavlink/transforms')
 const { timeout } = require('./utils')
 
 const deviceControlled = ({
@@ -40,15 +40,15 @@ const deviceIoTMavlink = ({
   interval,
   buffer,
 }) => adapters.connect(
-  adapters.transform(
+  //adapters.transform(
     adapters.serialport(
       serialPath,
       serialBaudRate,
       console.log
     ),
-    transforms.mavlink(),
-    transforms.mavlink()
-  ),
+   // transforms.mavlink(),
+   // transforms.mavlink()
+  //),
   adapters.throttle(
     adapters.googleIoT({
       mode: 'device',

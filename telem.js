@@ -49,6 +49,7 @@ const proxyPubSub = ({
       console.log
     ),
     adapters.transform(
+      adapters.throttle(
         adapters.pubsub({
           mode: 'proxy',
           uuid,
@@ -59,6 +60,9 @@ const proxyPubSub = ({
             console.log(...args)
           }
         }),
+        interval,
+        buffer,
+      ),
       recv => {
         return buff => {
           if (logRecv && logRecvTimeout) noDataTimeout()
@@ -80,8 +84,13 @@ const udpToSerial = ({
   udpPort,
   serialPath,
   serialBaudRate,
-}) => adapters.connect(
-  adapters.udp(
+  proxy,
+}) => adapters.connect(proxy
+  ? adapters.udpProxy(
+    udpHost,
+    udpPort,
+    console.log
+  ) : adapters.udp(
     udpHost,
     udpPort,
     console.log
@@ -122,6 +131,7 @@ const loadEnv = async assignEnv =>
 
 if (require.main === module) {
   (async () => {
+    console.log('Connecting...')
     const {
       env,
       credentials,
@@ -172,11 +182,13 @@ if (require.main === module) {
       const serialBaudRate = +(process.argv[4] || env.DEVICE_SERIAL_BAUD)
       const udpHost = process.argv[5] || env.DEVICE_UDP_HOST
       const udpPort = +(process.argv[6] || env.DEVICE_UDP_PORT)
+      const proxy = (process.argv[7] === 'proxy' || env.DEVICE_UDP_AS_PROXY)
       udpToSerial({
         udpHost,
         udpPort,
         serialPath,
         serialBaudRate,
+        proxy,
       })
     }
   })()
