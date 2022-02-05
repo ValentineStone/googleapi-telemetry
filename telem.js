@@ -36,7 +36,8 @@ const proxyPubSub = ({
   buffer,
   logRecv,
   logRecvTimeout = 0,
-  logRecvWarning = ''
+  logRecvWarning = '',
+  readonly,
 }) => {
   const noDataTimeout = timeout(() => {
     if (logRecvWarning) console.log(logRecvWarning)
@@ -48,19 +49,16 @@ const proxyPubSub = ({
       console.log
     ),
     adapters.transform(
-      //adapters.throttle(
         adapters.pubsub({
           mode: 'proxy',
           uuid,
           credentials,
+          suffix: require('os').hostname(),
           connected: (...args) => {
             if (logRecv && logRecvTimeout) noDataTimeout()
             console.log(...args)
           }
         }),
-      //  interval,
-      //  buffer,
-      //),
       recv => {
         return buff => {
           if (logRecv && logRecvTimeout) noDataTimeout()
@@ -71,7 +69,8 @@ const proxyPubSub = ({
           )
           recv(buff)
         }
-      }
+      },
+      readonly ? send => buff => undefined : undefined
     ),
   )
 }
@@ -97,7 +96,7 @@ const udpToSerial = ({
 const ignoreErrors = error => undefined
 
 const loadEnv = async assignEnv =>
-  await require('./zipenv')('keys_zip', assignEnv).catch(async () => {
+  await require('./zipenv')('keys', assignEnv).catch(async () => {
     const fs = require('fs/promises')
     const envData = await fs.readFile('.env')
     const env = require('dotenv').parse(envData)
@@ -141,6 +140,7 @@ if (require.main === module) {
       )
       const logRecvTimeout = +process.argv[6] || +env.PROXY_LOG_RECV_TIMEOUT
       const logRecvWarning = process.argv[7] || env.PROXY_LOG_RECV_WARNING
+      const readonly = env.READONLY === 'true'
       proxyPubSub({
         uuid,
         credentials,
@@ -150,7 +150,8 @@ if (require.main === module) {
         buffer: +env.IOT_THROTTLE_BUFFER,
         logRecv,
         logRecvTimeout,
-        logRecvWarning
+        logRecvWarning,
+        readonly
       })
     }
     else if (mode === 'device') {

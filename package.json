@@ -1,6 +1,6 @@
 {
   "name": "@valentine-stone/googleapi-telemetry",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An assortment of Google Cloud utilities.",
   "author": "Leonid Romanovsky <sirLeonidRomanovsky@gmail.com>",
   "license": "MIT",
@@ -11,13 +11,13 @@
   },
   "pkg": {},
   "scripts": {
-    "build": "pkg . --target node14-win-x86"
+    "build": "pkg . --target node14-win-x64"
   },
   "dependencies": {
-    "@valentine-stone/googleapi-utils": "^1.0.0",
+    "@valentine-stone/googleapi-utils": "^1.4.0",
     "@valentine-stone/googleapi-utils-mavlink": "^1.0.0",
     "chalk": "^4.1.1",
     "dotenv": "^8.2.0",
-    "jszip": "^3.6.0"
+    "jszip": "^3.7.1"
   }
 }
