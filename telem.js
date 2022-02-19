@@ -17,7 +17,6 @@ const devicePubSub = ({
   ),
   adapters.throttle(
     adapters.pubsub({
-      mode: 'device',
       credentials,
       uuid,
       connected: console.log
@@ -51,10 +50,9 @@ const proxyPubSub = ({
     adapters.transform(
       adapters.throttle(
         adapters.pubsub({
-          mode: 'proxy',
           uuid,
           credentials,
-          suffix: require('os').hostname(),
+          slave: require('os').hostname(),
           connected: (...args) => {
             if (logRecv && logRecvTimeout) noDataTimeout()
             console.log(...args)
