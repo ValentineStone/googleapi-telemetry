@@ -1,5 +1,6 @@
 'use strict'
 const adapters = require('@valentine-stone/googleapi-utils/adapters')
+const mjpegAdapter = require('./mjpeg-adapter')
 const { timeout } = require('./utils')
 
 const devicePubSub = ({
@@ -74,6 +75,31 @@ const proxyPubSub = ({
       },
       readonly ? send => buff => undefined : undefined
     ),
+  )
+}
+
+const videoPubSub = ({
+  uuid,
+  credentials,
+  host,
+  port,
+  path,
+}) => {
+  return adapters.connect(
+    mjpegAdapter({
+      host,
+      port,
+      path,
+      connected: console.log
+    }),
+    adapters.pubsub({
+      uuid: uuid + '-video',
+      credentials,
+      slave: require('os').hostname(),
+      connected: (...args) => {
+        console.log(...args)
+      }
+    }),
   )
 }
 
@@ -161,6 +187,19 @@ if (require.main === module) {
         logRecvWarning,
         readonly
       })
+      //require('./vid')(env, credentials)
+      if (env.USE_MJPEG === 'true') {
+        const mjpegHost = env.MJPEG_HOST || env.PROXY_UDP_GCS_HOST
+        const mjpegPort = +env.MJPEG_PORT || 33000
+        const mjpegPath = env.MJPEG_PATH || '/'
+        videoPubSub({
+          uuid,
+          credentials,
+          host: mjpegHost,
+          port: mjpegPort,
+          path: mjpegPath
+        })
+      }
     }
     else if (mode === 'device') {
       const uuid = env.DEVICE_UUID
