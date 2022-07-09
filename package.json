@@ -1,6 +1,6 @@
 {
   "name": "@valentine-stone/googleapi-telemetry",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "An assortment of Google Cloud utilities.",
   "author": "Leonid Romanovsky <sirLeonidRomanovsky@gmail.com>",
   "license": "MIT",
